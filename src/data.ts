@@ -86,8 +86,8 @@ export interface FetchResult {
 export async function fetchMarkets(fetchFn: typeof fetch = fetch): Promise<FetchResult> {
   try {
     const [cgRes, pmRes] = await Promise.all([
-      fetchFn(coingeckoUrl()),
-      fetchFn(polymarketUrl()).catch(() => null),
+      fetchFn(coingeckoUrl(), { signal: AbortSignal.timeout(12000) }),
+      fetchFn(polymarketUrl(), { signal: AbortSignal.timeout(12000) }).catch(() => null),
     ]);
     if (!cgRes.ok) throw new Error(`CoinGecko HTTP ${cgRes.status}`);
     const cg = (await cgRes.json()) as Record<string, { usd: number; usd_24h_change?: number }>;

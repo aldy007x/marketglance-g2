@@ -349,6 +349,7 @@ function runPreview(): void {
 
   wireVoiceBar(render);
 
+  render();
   void refresh(render);
   scheduleAutoRefresh(render);
 }
