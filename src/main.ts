@@ -228,7 +228,7 @@ function currentView(): View {
 
 // ---------- mode 1: real Even Hub bridge ----------
 
-async function runWithBridge(bridge: Awaited<ReturnType<typeof waitForEvenAppBridge>>): Promise<void> {
+async function runWithBridge(bridge: Awaited<ReturnType<typeof waitForEvenAppBridge>>): Promise<boolean> {
   const HEADER_ID = 1;
   const LIST_ID = 2;
 
@@ -287,6 +287,20 @@ async function runWithBridge(bridge: Awaited<ReturnType<typeof waitForEvenAppBri
     }
   }
 
+  // Capability probe: the SDK initializes a stub bridge in ANY browser
+  // (postMessage with no Flutter handler behind it), so the mere presence of
+  // a bridge proves nothing. Only a successful startup-container creation
+  // means a real Even environment is on the other end; otherwise the caller
+  // falls back to the browser preview instead of rendering into the void.
+  {
+    const { header, list } = containers();
+    const probe = await bridge.createStartUpPageContainer(
+      new CreateStartUpPageContainer({ containerTotalNum: 2, textObject: [header], listObject: [list] }),
+    );
+    if (probe !== StartUpPageCreateResult.success) return false;
+    started = true;
+  }
+
   bridge.onEvenHubEvent((event) => {
     const listEvent = event.listEvent;
     if (!listEvent || listEvent.containerID !== LIST_ID) return;
@@ -312,6 +326,7 @@ async function runWithBridge(bridge: Awaited<ReturnType<typeof waitForEvenAppBri
 
   await refresh(() => void render());
   scheduleAutoRefresh(() => void render());
+  return true;
 }
 
 // ---------- mode 2: plain-browser preview ----------
@@ -322,8 +337,6 @@ function runPreview(): void {
   const itemsEl = document.getElementById('g2items');
   const canvas = document.getElementById('g2canvas');
   if (!root || !headerEl || !itemsEl || !canvas) return;
-  (window as unknown as { __MG_ALIVE?: boolean }).__MG_ALIVE = true;
-  document.getElementById('bootlog')?.remove();
   root.style.display = 'block';
 
   function render(): void {
@@ -440,7 +453,8 @@ async function boot(): Promise<void> {
     bridge = undefined;
   }
   if (bridge) {
-    await runWithBridge(bridge);
+    const ok = await runWithBridge(bridge);
+    if (!ok) runPreview();
   } else {
     runPreview();
   }
