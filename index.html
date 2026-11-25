@@ -59,6 +59,18 @@
     </style>
   </head>
   <body>
+    <div id="bootlog" style="position:fixed;top:0;left:0;right:0;z-index:99;background:#3a3000;color:#ffe95e;font:13px/1.5 ui-monospace,monospace;padding:8px 10px;white-space:pre-wrap;">BOOT LOG
+</div>
+    <script>
+      window.__bootlog = function (m) { var el = document.getElementById('bootlog'); if (el) el.textContent += m + '\n'; };
+      window.addEventListener('error', function (e) { window.__bootlog('ERROR: ' + (e.message || e.type) + ' @ ' + (e.filename || '') + ':' + (e.lineno || '')); }, true);
+      window.addEventListener('unhandledrejection', function (e) { window.__bootlog('REJECTION: ' + String((e.reason && e.reason.message) || e.reason)); });
+      window.__bootlog('inline trap armed');
+      setTimeout(function () {
+        var p = document.getElementById('preview');
+        window.__bootlog('after 6s: preview=' + (p ? getComputedStyle(p).display : 'missing') + ' alive=' + (window.__MG_ALIVE ? 'yes' : 'NO'));
+      }, 6000);
+    </script>
     <div id="preview">
       <div class="g2" id="g2canvas">
         <div class="hdr" id="g2header">Loading…</div>

@@ -322,6 +322,8 @@ function runPreview(): void {
   const itemsEl = document.getElementById('g2items');
   const canvas = document.getElementById('g2canvas');
   if (!root || !headerEl || !itemsEl || !canvas) return;
+  (window as unknown as { __MG_ALIVE?: boolean }).__MG_ALIVE = true;
+  document.getElementById('bootlog')?.remove();
   root.style.display = 'block';
 
   function render(): void {
