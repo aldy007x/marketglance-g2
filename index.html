@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MarketGlance — Even G2</title>
+    <style>
+      /* These styles only affect the plain-browser preview fallback.
+         On the glasses, the Even Hub SDK renders native containers and
+         this page's DOM is not visible. */
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background: #101410;
+        color: #cfe8cf;
+        font-family: ui-monospace, Menlo, Consolas, monospace;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 24px 12px;
+        box-sizing: border-box;
+      }
+      #preview { display: none; }
+      .g2 {
+        width: 576px;
+        max-width: 94vw;
+        aspect-ratio: 576 / 288;
+        background: #06130a;
+        border: 2px solid #2c5b34;
+        border-radius: 10px;
+        color: #69f57e;
+        padding: 14px 18px;
+        box-sizing: border-box;
+        overflow: hidden;
+        text-shadow: 0 0 6px rgba(80, 255, 120, 0.45);
+      }
+      .g2 .hdr { white-space: pre-line; font-size: 17px; line-height: 1.35; margin-bottom: 8px; }
+      .g2 .item {
+        font-size: 17px;
+        line-height: 1.5;
+        padding: 1px 6px;
+        cursor: pointer;
+        white-space: nowrap;
+      }
+      .g2 .item:hover { background: rgba(105, 245, 126, 0.16); }
+      .hint { margin-top: 12px; font-size: 13px; opacity: 0.75; text-align: center; }
+      .voicebar { margin-top: 16px; width: 576px; max-width: 94vw; }
+      .voicerow { display: flex; gap: 8px; }
+      .voicerow input {
+        flex: 1; background: #0c1a0e; color: #cfe8cf; border: 1px solid #2c5b34;
+        border-radius: 6px; padding: 8px 10px; font: inherit; font-size: 13px;
+      }
+      .voicerow button {
+        background: #14301a; color: #9fe8ab; border: 1px solid #2c5b34; border-radius: 6px;
+        padding: 8px 14px; font: inherit; font-size: 13px; cursor: pointer;
+      }
+      .voicerow button:disabled { opacity: 0.5; cursor: default; }
+      .voiceline { margin-top: 8px; font-size: 13px; opacity: 0.85; min-height: 1.2em; }
+    </style>
+  </head>
+  <body>
+    <div id="preview">
+      <div class="g2" id="g2canvas">
+        <div class="hdr" id="g2header">Loading…</div>
+        <div id="g2items"></div>
+      </div>
+      <div class="hint">
+        Browser preview of the G2 display (576 × 288, monochrome green).<br />
+        Click a line to select it — that is a temple tap / ring click on the glasses.<br />
+        Double-click the canvas to go back (double-tap on the glasses).
+      </div>
+      <div class="voicebar">
+        <div class="voicerow">
+          <button id="micbtn" type="button">Speak</button>
+          <input id="cmdinput" type="text" placeholder='…or type a command: "buy 100 of Bitcoin", "watch Solana", "portfolio"' />
+          <button id="cmdgo" type="button">Run</button>
+        </div>
+        <div class="voiceline" id="voiceline">Voice commands drive the same state machine as taps. On real G2 hardware the mic audio goes to the backend STT endpoint instead.</div>
+      </div>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
